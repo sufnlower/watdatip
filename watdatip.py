@@ -5,7 +5,7 @@ import re
 
 def sslsubjectcheck(ip,v):
     hostname = None
-    command = f"/usr/bin/curl --insecure -vvI https://{ip} 2>&1 | /usr/bin/awk 'BEGIN {{ cert=0 }} /^\* SSL connection/ {{ cert=1 }} /^\*/ {{ if (cert) print }}'"
+    command = f"/usr/bin/curl --insecure -vvI https://{ip} --max-time 2 2>&1 | /usr/bin/awk 'BEGIN {{ cert=0 }} /^\* SSL connection/ {{ cert=1 }} /^\*/ {{ if (cert) print }}'"
     if v:
         print(command)
     result = subprocess.run(command,capture_output=True, text=True, shell=True, encoding='utf-8', errors='ignore')
@@ -18,7 +18,7 @@ def sslsubjectcheck(ip,v):
     return hostname
     
 def redirectcheck(ip,v):      
-    command = f"/usr/bin/curl --insecure -I https://{ip} | grep location"
+    command = f"/usr/bin/curl --insecure -I https://{ip} --max-time 2 | grep location"
     if v:
         print(command)
     result = subprocess.run(command,capture_output=True, text=True, shell=True, encoding='utf-8', errors='ignore')
