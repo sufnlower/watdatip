@@ -61,7 +61,7 @@ def main():
 
     ips = []
     results = []
-
+    wildcards = []
     if args.ip != None:
         ips.append(args.ip)
     elif args.file != None:
@@ -77,11 +77,15 @@ def main():
         print(f"{hostname} {ip}")
 
         if hostname != None:
-            ns = nslookupcheck(ip,hostname, args.verbose)
-            if ns != None:
-                print(f"Match found: {hostname} {ip}")
-                results.append(ns)
-                continue
+            if "*" in hostname:
+                wildcards.append(hostname)
+            else:
+                ns = nslookupcheck(ip,hostname, args.verbose)
+                if ns != None:
+                    print(f"Match found: {hostname} {ip}")
+                    results.append(ns)
+                    continue
+
 
         print("doing redirect check")
         hostname = redirectcheck(ip, args.verbose)

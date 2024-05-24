@@ -21,7 +21,6 @@ def doPostRequest(url,v):
         print(command)
     result = subprocess.run(command,capture_output=True, text=True, shell=True, encoding='utf-8', errors='ignore')
     if v:
-        print("gothere")
         print(result.stdout)
     if result != None:
         return result.stdout
@@ -49,7 +48,7 @@ def main():
         print("doing get request check looking for xml")
         response = doGetRequest(url, args.verbose)
         if response != None:
-            if "xml" in response:
+            if "xml" in response and "<html xmlns" not in response:
                 results.append(f"{url} had \"xml\" in the response body or headers")
                 print(f"{url} had \"xml\" in the response body or headers")
         else:
