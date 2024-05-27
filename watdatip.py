@@ -65,10 +65,11 @@ def checkIPs(ips, verbose=False):
             if "*" in hostname:
                 wildcards.append(f"{ip} {hostname}")
             else:
-                ns = nslookupcheck(ip,hostname, verbose)
+                ns = nslookupcheck(ip,hostname,verbose)
                 if ns != None:
                     print(f"Match found: {hostname} {ip}")
-                    results.append(ns)
+                    ns_results.append(ns)
+                    results.append(hostname)
                     continue
         print("doing redirect check")
         hostname = redirectcheck(ip, verbose)
