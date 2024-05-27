@@ -35,13 +35,12 @@ def processNmap(stdoutStr):
     print("=================")
     print("Concise Output")
     print("=================")
-    
+    ipsForOut = []
     for target in targets[1:]:
         ip = re.findall(r'\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b',target)[0]
         results = target[target.index("REASON\n")+6:]
         result_lines = results.split("\n")
-        openPorts = []
-        ipsForOut = []
+        openPorts = []      
         for line in result_lines:
             port = re.search(r'\d+', line)
             if "open" in line and port is not None:
