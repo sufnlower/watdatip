@@ -56,56 +56,64 @@ def main():
     parser = argparse.ArgumentParser()
     #parser.add_argument('-p','--ports', default="80,139,443,22,445,88", help="Ports like nmap takes them. Defaults to 80,443,22,445,88")
     parser.add_argument('-f','--file', help='Input file for IPs')
+    parser.add_argument('-p', '--ports', help='both, 80, or 443')
     args = parser.parse_args()
     
-    nmapout443 = doNmap(443,args.file)
-    upIPs443 = processNmap(nmapout443)
+    httpurls = []
+    httpsurls = []    
+    xml80urls = []
+    xml443urls = []
 
-    nmapout80 = doNmap(80,args.file)
-    upIPs80 = processNmap(nmapout80)
 
-    checkIPsResult = checkIPs(upIPs443)
-    ns_results, watDatHostnames, watDatWildcards = (checkIPsResult if checkIPsResult is not None else ([], [], []))
-   
-    #443 check for xml with hostnames
-    prepend = "https://"
-    httpsurls = [f'{prepend}{ip}' for ip in watDatHostnames]
-    xml443urls = checkForXML(httpsurls)
+    if args.ports == "80" or args.ports == "both":
+        #do nmap
+        nmapout80 = doNmap(80,args.file)
+        upIPs80 = processNmap(nmapout80)
+        #80 check for xml with IPs
+        prepend = "http://"
+        httpurls = [f'{prepend}{ip}' for ip in upIPs80]
+        xml80urls = checkForXML(httpurls)
+        with open("httphosts.txt", 'w') as file:
+            for httpurl in httpurls:
+                file.write(httpurl + "\n")
+    
 
-    #80 check for xml with IPs
-    prepend = "http://"
-    print("printing upIPs80")
-    print(upIPs80)
-    print("finished printing upIPs80")
-    httpurls = [f'{prepend}{ip}' for ip in upIPs80]
-    xml80urls = checkForXML(httpurls)
+    if args.ports == "443" or args.ports == "both":
+        #do nmap
+        nmapout443 = doNmap(443,args.file)
+        upIPs443 = processNmap(nmapout443)
+        #do watdatip
+        checkIPsResult = checkIPs(upIPs443)
+        ns_results, watDatHostnames, watDatWildcards = (checkIPsResult if checkIPsResult is not None else ([], [], []))
+        #443 check for xml with hostnames
+        prepend = "https://"
+        httpsurls = [f'{prepend}{ip}' for ip in watDatHostnames]
+        xml443urls = checkForXML(httpsurls)
+        #out wildcards
+        with open("https_wildcards.txt", 'w') as file:
+            for result in watDatWildcards:
+                file.write(result + "\n")
+        #out https urls with their ip
+        with open("https_urls_ips.txt", 'w') as file:
+            for result in ns_results:
+                file.write(result + "\n")
+        #out https urls
+        with open("httpshosts.txt", 'w') as file:
+            for httpsurl in httpsurls:
+                file.write(httpsurl + "\n")
     
     xmlUrls = xml443urls + xml80urls
     allUrls = httpsurls + httpurls
 
     serverHeaders = getServerHeaders(allUrls)
-    for header in serverHeaders:
-            file.write(header + "\n")
-
-    with open("https_wildcards.txt", 'w') as file:
-        for result in watDatWildcards:
-            file.write(result + "\n")
-
-    with open("https_urls_ips.txt", 'w') as file:
-        for result in ns_results:
-            file.write(result + "\n")
+    
+    with open("server_headers.txt, 'w'") as file:
+        for header in serverHeaders:
+            file.write(header + "\n")  
 
     with open("xmlhosts.txt", 'w') as file:
         for xmlUrl in xmlUrls:
             file.write(xmlUrl + "\n")
-
-    with open("httpshosts.txt", 'w') as file:
-        for httpsurl in httpsurls:
-            file.write(httpsurl + "\n")
-
-    with open("httphosts.txt", 'w') as file:
-        for httpurl in httpurls:
-            file.write(httpurl + "\n")
 
 if __name__ == "__main__":
     main()
