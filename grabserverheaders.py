@@ -16,7 +16,7 @@ def getServerResponseHeader(url,v):
             return line
     return None
 
-def getServerHeaders(urls,verbose):
+def getServerHeaders(urls,verbose=False):
     results = []
     for url in urls:
         print("doing server header check")
