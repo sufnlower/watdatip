@@ -66,11 +66,11 @@ def main():
     nmapout80 = doNmap(80,args.file)
     upIPs80 = processNmap(nmapout80)
 
-    watDatResults, watDatWildcards = checkIPs(upIPs443)
+    ns_results, watDatHostnames, watDatWildcards = checkIPs(upIPs443)
 
     #443 check for xml with hostnames
     prepend = "https://"
-    httpsurls = [f'{prepend}{ip}' for ip in watDatResults]
+    httpsurls = [f'{prepend}{ip}' for ip in watDatHostnames]
     xml443urls = checkForXML(httpsurls)
 
     #80 check for xml with IPs
@@ -84,6 +84,14 @@ def main():
     serverHeaders = getServerHeaders(allUrls)
     for header in serverHeaders:
             file.write(header + "\n")
+
+    with open("https_wildcards.txt", 'w') as file:
+        for result in watDatWildcards:
+            file.write(result + "\n")
+
+    with open("https_urls_ips.txt", 'w') as file:
+        for result in ns_results:
+            file.write(result + "\n")
 
     with open("xmlhosts.txt", 'w') as file:
         for xmlUrl in xmlUrls:

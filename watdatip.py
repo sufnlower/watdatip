@@ -69,8 +69,6 @@ def checkIPs(ips, verbose=False):
                     print(f"Match found: {hostname} {ip}")
                     results.append(ns)
                     continue
-
-
         print("doing redirect check")
         hostname = redirectcheck(ip, verbose)
         print(f"{hostname} {ip}")
@@ -78,9 +76,9 @@ def checkIPs(ips, verbose=False):
             ns = nslookupcheck(ip,hostname, verbose)
             if ns != None:
                 print(f"Match found: {hostname} {ip}")
-                results.append(ns)
+                results.append(hostname)
                 continue
-    return results, wildcards
+    return results
 
 def main():
     parser = argparse.ArgumentParser()
