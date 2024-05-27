@@ -51,8 +51,7 @@ def processNmap(stdoutStr):
             ipsForOut.append(ip)
         else:
             print("No open ports found exiting.")
-            exit()
-        return ipsForOut
+    return ipsForOut
 
 def main():
     parser = argparse.ArgumentParser()
