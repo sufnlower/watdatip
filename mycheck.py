@@ -75,6 +75,9 @@ def main():
 
     #80 check for xml with IPs
     prepend = "http://"
+    print("printing upIPs80")
+    print(upIPs80)
+    print("finished printing upIPs80")
     httpurls = [f'{prepend}{ip}' for ip in upIPs80]
     xml80urls = checkForXML(httpurls)
     
