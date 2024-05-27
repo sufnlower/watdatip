@@ -28,7 +28,7 @@ def doNmap(port,file):
     nmap_out.wait()
     return stdoutStr
 
-def processNmap(stdoutStr,port):
+def processNmap(stdoutStr):
     targets = stdoutStr.split("Nmap scan report for ")
     count=0
     
@@ -49,10 +49,6 @@ def processNmap(stdoutStr,port):
         if len(openPorts) != 0:
             print(f"{ip} appears up due to the following: Open {openPorts}.")
             ipsForOut.append(ip)
-        if ipsForOut != None:
-            outfilename = port + "_ips.txt"
-            with open(outfilename,'w') as file:
-                file.write(ip+"\n")
         else:
             print("No open ports found exiting.")
             exit()
