@@ -55,6 +55,7 @@ def nslookupcheck(ip,hostname,v):
 def checkIPs(ips, verbose=False):
     results = []
     wildcards = []
+    ns_results = []
     for ip in ips:
         print("doing ssl subject check")
         hostname = sslsubjectcheck(ip, verbose)
@@ -76,9 +77,10 @@ def checkIPs(ips, verbose=False):
             ns = nslookupcheck(ip,hostname, verbose)
             if ns != None:
                 print(f"Match found: {hostname} {ip}")
+                ns_results.append(ns)
                 results.append(hostname)
                 continue
-    return results
+    return ns_results, results, wildcards
 
 def main():
     parser = argparse.ArgumentParser()
@@ -97,15 +99,14 @@ def main():
             lines = [line.strip() for line in lines]
         ips = lines
     
-    results, wildcards = checkIPs(ips,args.verbose)
-    
-    
+    checkIPsResult = checkIPs(ips,args.verbose)
+    ns_results, results, wildcards = (checkIPsResult if checkIPsResult is not None else ([], [], []))
     
     print("===========")
     print("All Matches")
     print("===========")
     if results != None:
-        for result in results:
+        for result in ns_results:
             print(result)    
     print("===========")
     print("All Wildcards")
