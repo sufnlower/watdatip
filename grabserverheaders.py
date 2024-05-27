@@ -16,6 +16,18 @@ def getServerResponseHeader(url,v):
             return line
     return None
 
+def getServerHeaders(urls,verbose):
+    results = []
+    for url in urls:
+        print("doing server header check")
+        serverHeader = getServerResponseHeader(url, verbose)
+        if serverHeader != None:
+            results.append(f"{url} {serverHeader}")
+            print(f"{url} {serverHeader}")
+        else:
+            print(f"{url} Server header not found")
+    return results
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('-u','--url', help="Check one URL")
@@ -34,21 +46,15 @@ def main():
             lines = [line.strip() for line in lines]
         urls = lines
     
-     
-    for url in urls:
-        print("doing server header check")
-        serverHeader = getServerResponseHeader(url, args.verbose)
-        if serverHeader != None:
-            results.append(f"{url} {serverHeader}")
-            print(f"{url} {serverHeader}")
-        else:
-            print(f"{url} Server header not found")
+    results = getServerHeaders(urls,args.verbose)
+   
 
     print("===========")
     print("All Results")
     print("===========")
-    for result in results:
-        print(result)   
+    if results != None:
+        for result in results:
+            print(result)   
 
 
 if __name__ == "__main__":

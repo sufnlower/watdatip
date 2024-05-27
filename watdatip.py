@@ -52,6 +52,36 @@ def nslookupcheck(ip,hostname,v):
     return None
 
 
+def checkIPs(ips, verbose=False):
+    results = []
+    wildcards = []
+    for ip in ips:
+        print("doing ssl subject check")
+        hostname = sslsubjectcheck(ip, verbose)
+        print(f"{hostname} {ip}")
+
+        if hostname != None:
+            if "*" in hostname:
+                wildcards.append(f"{ip} {hostname}")
+            else:
+                ns = nslookupcheck(ip,hostname, verbose)
+                if ns != None:
+                    print(f"Match found: {hostname} {ip}")
+                    results.append(ns)
+                    continue
+
+
+        print("doing redirect check")
+        hostname = redirectcheck(ip, verbose)
+        print(f"{hostname} {ip}")
+        if hostname != None:
+            ns = nslookupcheck(ip,hostname, verbose)
+            if ns != None:
+                print(f"Match found: {hostname} {ip}")
+                results.append(ns)
+                continue
+    return results, wildcards
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('-i','--ip', help="Check one IP")
@@ -60,8 +90,7 @@ def main():
     args = parser.parse_args()
 
     ips = []
-    results = []
-    wildcards = []
+
     if args.ip != None:
         ips.append(args.ip)
     elif args.file != None:
@@ -70,39 +99,22 @@ def main():
             lines = [line.strip() for line in lines]
         ips = lines
     
-     
-    for ip in ips:
-        print("doing ssl subject check")
-        hostname = sslsubjectcheck(ip, args.verbose)
-        print(f"{hostname} {ip}")
-
-        if hostname != None:
-            if "*" in hostname:
-                wildcards.append(hostname)
-            else:
-                ns = nslookupcheck(ip,hostname, args.verbose)
-                if ns != None:
-                    print(f"Match found: {hostname} {ip}")
-                    results.append(ns)
-                    continue
-
-
-        print("doing redirect check")
-        hostname = redirectcheck(ip, args.verbose)
-        print(f"{hostname} {ip}")
-        if hostname != None:
-            ns = nslookupcheck(ip,hostname, args.verbose)
-            if ns != None:
-                print(f"Match found: {hostname} {ip}")
-                results.append(ns)
-                continue
+    results, wildcards = checkIPs(ips,args.verbose)
+    
+    
     
     print("===========")
     print("All Matches")
     print("===========")
-    for result in results:
-        print(result)    
-
+    if results != None:
+        for result in results:
+            print(result)    
+    print("===========")
+    print("All Wildcards")
+    print("===========")
+    if results != None:
+        for wildcard in wildcards:
+            print(wildcard) 
 
 
 

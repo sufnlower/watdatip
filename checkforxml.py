@@ -25,6 +25,27 @@ def doPostRequest(url,v):
     if result != None:
         return result.stdout
 
+def checkForXML(urls, verbose=False):
+        results = []
+        for url in urls:
+            print("doing get request check looking for xml")
+            response = doGetRequest(url, verbose)
+            if response != None:
+                if "xml" in response and "<html xmlns" not in response:
+                    results.append(f"{url} had \"xml\" in the response body or headers")
+                    print(f"{url} had \"xml\" in the response body or headers")
+            else:
+                print(f"{url} no response")
+            print("doing post request check looking for xml")
+            response = doPostRequest(url, verbose)
+            if response != None:
+                if "xml" in response and "<html xmlns" not in response:
+                    results.append(f"{url} had \"xml\" in the response body or headers")
+                    print(f"{url} had \"xml\" in the response body or headers")
+            else:
+                print(f"{url} no response")
+        return results
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('-u','--url', help="Check one URL")
@@ -33,7 +54,7 @@ def main():
     args = parser.parse_args()
 
     urls = []
-    results = []
+    
 
     if args.url != None:
         urls.append(args.url)
@@ -43,32 +64,14 @@ def main():
             lines = [line.strip() for line in lines]
         urls = lines
     
-     
-    for url in urls:
-        print("doing get request check looking for xml")
-        response = doGetRequest(url, args.verbose)
-        if response != None:
-            if "xml" in response and "<html xmlns" not in response:
-                results.append(f"{url} had \"xml\" in the response body or headers")
-                print(f"{url} had \"xml\" in the response body or headers")
-        else:
-            print(f"{url} no response")
-        print("doing post request check looking for xml")
-        response = doPostRequest(url, args.verbose)
-        if response != None:
-            if "xml" in response:
-                results.append(f"{url} had \"xml\" in the response body or headers")
-                print(f"{url} had \"xml\" in the response body or headers")
-        else:
-            print(f"{url} no response")
-
-        
+    results = checkForXML(urls, args.verbose)     
 
     print("===========")
     print("All Results")
     print("===========")
-    for result in results:
-        print(result)   
+    if results != None:
+        for result in results:
+            print(result)   
 
 
 if __name__ == "__main__":
