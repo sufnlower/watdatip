@@ -107,7 +107,7 @@ def main():
 
     serverHeaders = getServerHeaders(allUrls)
     
-    with open("server_headers.txt, 'w'") as file:
+    with open("server_headers.txt", 'w') as file:
         for header in serverHeaders:
             file.write(header + "\n")  
 
