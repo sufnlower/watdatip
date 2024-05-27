@@ -66,8 +66,9 @@ def main():
     nmapout80 = doNmap(80,args.file)
     upIPs80 = processNmap(nmapout80)
 
-    ns_results, watDatHostnames, watDatWildcards = checkIPs(upIPs443)
-
+    checkIPsResult = checkIPs(upIPs443)
+    ns_results, watDatHostnames, watDatWildcards = (checkIPsResult if checkIPsResult is not None else ([], [], []))
+   
     #443 check for xml with hostnames
     prepend = "https://"
     httpsurls = [f'{prepend}{ip}' for ip in watDatHostnames]
