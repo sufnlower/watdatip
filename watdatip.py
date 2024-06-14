@@ -32,7 +32,7 @@ def sslcheck(ip,v):
     results = []
     cert = get_server_certificate(ip,443)
     results.append(extract_cn_from_cert(cert))
-    results.append(extract_sans_from_cert(cert))
+    results.extend(extract_sans_from_cert(cert))
     return results
 
 # def sslsubjectcheck(ip,v):
