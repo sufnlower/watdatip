@@ -90,7 +90,10 @@ def checkIPs(ips, verbose=False):
     ns_results = []
     for ip in ips:
         print("doing ssl subject check")
-        hostnames = sslcheck(ip, verbose)
+        try:
+            hostnames = sslcheck(ip, verbose)
+        except:
+            continue
         for hostname in hostnames:        
             print(f"{hostname} {ip}")
             if hostname != None:
