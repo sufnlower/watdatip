@@ -106,16 +106,16 @@ def checkIPs(ips, verbose=False):
                         ns_results.append(ns)
                         results.append(hostname)
                         continue
-            print("doing redirect check")
-            hostname = redirectcheck(ip, verbose)
-            print(f"{hostname} {ip}")
-            if hostname != None:
-                ns = nslookupcheck(ip,hostname, verbose)
-                if ns != None:
-                    print(f"Match found: {hostname} {ip}")
-                    ns_results.append(ns)
-                    results.append(hostname)
-                    continue
+        print("doing redirect check")
+        hostname = redirectcheck(ip, verbose)
+        print(f"{hostname} {ip}")
+        if hostname != None:
+            ns = nslookupcheck(ip,hostname, verbose)
+            if ns != None:
+                print(f"Match found: {hostname} {ip}")
+                ns_results.append(ns)
+                results.append(hostname)
+                continue
     
         print("===========")
     print("All Matches")
