@@ -10,12 +10,7 @@ from grabserverheaders import *
 
 def doNmap(port,file):
     
-    cmd = "/usr/bin/nmap "
-    if file != None:
-        cmd += f"-iL {file} "
-    cmd += f"-p {port} "
-    cmd += "-vv"
-    
+    cmd = f"/usr/bin/nmap -iL {file} -p {port} -vv -Pn -n"
     stdoutStr = ""
     nmap_out = subprocess.Popen(cmd,shell=True,stdout=subprocess.PIPE,stderr=subprocess.STDOUT)
     while True:
@@ -32,13 +27,16 @@ def processNmap(stdoutStr):
     targets = stdoutStr.split("Nmap scan report for ")
     count=0
     
-    print("=================")
-    print("Concise Output")
-    print("=================")
+    print("===================")
+    print("Concise Nmap Output")
+    print("===================")
     ipsForOut = []
     for target in targets[1:]:
         ip = re.findall(r'\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b',target)[0]
-        results = target[target.index("REASON\n")+6:]
+        try:
+            results = target[target.index("REASON\n")+6:]
+        except:
+            continue
         result_lines = results.split("\n")
         openPorts = []      
         for line in result_lines:
@@ -48,8 +46,7 @@ def processNmap(stdoutStr):
         if len(openPorts) != 0:
             print(f"{ip} appears up due to the following: Open {openPorts}.")
             ipsForOut.append(ip)
-        else:
-            print("No open ports found exiting.")
+    print("===================")
     return ipsForOut
 
 def main():
